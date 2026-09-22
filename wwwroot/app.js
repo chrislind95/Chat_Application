@@ -1,34 +1,21 @@
-// Lab 1: Klienten
-//
-// Du behöver inte kunna JavaScript på djupet. Följ TODO-punkterna och läs koden rad för rad.
-// Poängen är att se hur ett anrop går från klienten till Hubben och tillbaka till alla klienter.
-
 const statusEl = document.getElementById("status");
 const messagesEl = document.getElementById("messages");
 const form = document.getElementById("send-form");
 const usernameEl = document.getElementById("username");
 const messageEl = document.getElementById("message");
 
-// TODO 1.4: Skapa anslutningen med HubConnectionBuilder.
-//           URL:en ska vara samma som du mappade i Program.cs.
-//           Ledtråd: new signalR.HubConnectionBuilder().withUrl("...").build()
-const connection = null;
+//Skapar en SignalR-anslutning till ChatHub på servern
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/hubs/chat")
+    .build();
 
 // Används från konsolen i lab 2 när du har skapat anslutningen ovan.
 window.connection = connection;
 
-// TODO 1.5: Registrera en handler för klientmetoden "ReceiveMessage".
-//           Servern anropar den med (username, message). Lägg till en rad i listan.
-//           Ledtråd: connection.on("ReceiveMessage", (username, message) => { ... });
-//           Använd funktionen addMessage nedan.
-
-// TODO 1.8 (krävs för lab 2 och 3): registrera två handlers till, som hör ihop med
-//           gruppmetoderna i ChatHub.cs:
-//             connection.on("ReceiveGroupMessage", (groupName, username, message) => ...)
-//             connection.on("ReceiveSystem", (message) => ...)
-//           Det finns ingen knapp för grupper i den här sidan. Du anropar dem från konsolen:
-//             connection.invoke("JoinGroup", "General")
-//             connection.invoke("SendToGroup", "General", "Alice", "hej gruppen")
+//Tar emot meddelanden från servern och visar dem i chatten
+connection.on("ReceiveMessage", (username, message) => {
+    addMessage(username, message);
+});
 
 function addMessage(username, message) {
     const li = document.createElement("li");
@@ -43,11 +30,15 @@ function setStatus(text, connected) {
     statusEl.className = connected ? "status status--on" : "status status--off";
 }
 
+//Skickar användarnamn och meddelande till SignalR-hubben
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // TODO 1.6: Anropa Hub-metoden SendMessage på servern med användarnamn och meddelande.
-    //           Ledtråd: await connection.invoke("SendMessage", usernameEl.value, messageEl.value);
+    await connection.invoke(
+        "SendMessage",
+        usernameEl.value,
+        messageEl.value
+    );
 
     messageEl.value = "";
     messageEl.focus();
@@ -60,7 +51,8 @@ async function start() {
     }
 
     try {
-        // TODO 1.7: Starta anslutningen. Ledtråd: await connection.start();
+        await connection.start();
+
         const connected = connection.state === signalR.HubConnectionState.Connected;
         setStatus(connected ? "Ansluten" : "Anslutningen är inte startad ännu", connected);
     } catch (err) {
