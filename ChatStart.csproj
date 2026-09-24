@@ -8,4 +8,11 @@
     <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefaultItemExcludes>
+      $(DefaultItemExcludes);
+      ChatStart.Tests\**
+    </DefaultItemExcludes>
+  </PropertyGroup>
+
 </Project>
