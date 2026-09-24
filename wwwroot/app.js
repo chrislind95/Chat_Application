@@ -19,8 +19,13 @@ connection.on("ReceiveMessage", (username, message) => {
 
 function addMessage(username, message) {
     const li = document.createElement("li");
-    // Bygger raden som HTML så att namnet kan visas i fetstil.
-    li.innerHTML = `<strong>${username}</strong>: ${message}`;
+
+    const usernameElement = document.createElement("strong");
+    usernameElement.textContent = username;
+
+    li.appendChild(usernameElement);
+    li.append(`: ${message}`);
+
     messagesEl.appendChild(li);
     li.scrollIntoView();
 }
@@ -34,14 +39,38 @@ function setStatus(text, connected) {
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    await connection.invoke(
-        "SendMessage",
-        usernameEl.value,
-        messageEl.value
-    );
+    const username = usernameEl.value.trim();
+    const message = messageEl.value.trim();
 
-    messageEl.value = "";
-    messageEl.focus();
+    if(!username){
+        alert("Du måste ange ett användarnamn.");
+        return;
+    }
+    if(!message){
+        alert("Du måste skriva ett meddelande.");
+        return;
+    }
+    if(username.length > 20){
+        alert("Användarnamnet får vara högst 20 tecken.");
+        return;
+    }
+    if(message.length > 500){
+        alert("Meddelandet får vara högst 500 tecken.");
+        return;
+    }
+
+    try{
+        await connection.invoke(
+            "SendMessage",
+            username,
+            message
+        );
+
+        messageEl.value = "";
+        messageEl.focus();
+    } catch (err) {
+        alert(err.message);
+    }
 });
 
 async function start() {
