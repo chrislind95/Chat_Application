@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lab 1 · Bygg chatten | SignalR</title>
+  <title>Chatten | SignalR</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,6 +18,7 @@
     <ul id="messages" class="messages" aria-live="polite"></ul>
 
     <form id="send-form" class="send">
+      <input id="room" type="text" placeholder="Chattrum" autocomplete="off" required>
       <input id="username" type="text" placeholder="Ditt namn" autocomplete="off" required>
       <input id="message" type="text" placeholder="Meddelande" autocomplete="off" required>
       <button type="submit">Skicka</button>
