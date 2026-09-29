@@ -3,6 +3,7 @@ const messagesEl = document.getElementById("messages");
 const form = document.getElementById("send-form");
 const usernameEl = document.getElementById("username");
 const messageEl = document.getElementById("message");
+const roomEl = document.getElementById("room");
 
 //Skapar en SignalR-anslutning till ChatHub på servern
 const connection = new signalR.HubConnectionBuilder()
@@ -60,10 +61,19 @@ form.addEventListener("submit", async (event) => {
     }
 
     try{
+        const room = roomEl.value.trim();
+
+        if(!room){
+            alert("Du måste ange ett chattrum.");
+            return;
+        }
+        await connection.invoke("JoinRoom", room);
+
         await connection.invoke(
             "SendMessage",
             username,
-            message
+            message,
+            room
         );
 
         messageEl.value = "";
