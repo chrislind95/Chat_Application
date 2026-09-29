@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using ChatStart.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Använder HTTP/1.1 för att göra WebSocket-handshaken tydlig under utveckling och testning
@@ -7,6 +10,9 @@ builder.WebHost.ConfigureKestrel(kestrel =>
 
 //Registrerar SignalR i applikationens dependecy injection-container
 builder.Services.AddSignalR();
+
+builder.Services.AddDbContext<ChatDbContext>(options =>
+    options.UseSqlite("Data Source=chat.db"));
 
 var app = builder.Build();
 

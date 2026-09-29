@@ -15,4 +15,8 @@
     </DefaultItemExcludes>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.20" />
+  </ItemGroup>
+
 </Project>
